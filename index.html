@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1e293b">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Beer Tracker">
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiQmVlciBCdWRnZXQgVHJhY2tlciIsInNob3J0X25hbWUiOiJCZWVyIFRyYWNrZXIiLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzFlMjkzYiIsInRoZW1lX2NvbG9yIjoiIzFlMjkzYiIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSFpwWlhkQ2IzZzlJakFnTUNBeE1qZ2dNVEk0SWo0OGNtVmpkQ0IzYVdSMGFEMGlNVEk0SWlCb1pXbG5hSFE5SWpFeU9DSWdabWxzYkQwaUl6RTFPVE0xT0NJdlBqeDBaWGgwSUhnOUlqWTBJaUI1UFNJM05DSWdabTl1ZEMxemFYcGxQU0kxTmlJZ1ptbHNiRDBpSTJabVppSStmRHd2ZEdWNGRENDhMMk4yWno0PSIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgZmlsbD0iIzE1OTM1OCIvPjx0ZXh0IHg9IjY0IiB5PSI3NCIgZm9udC1zaXplPSI1NiIgZmlsbD0iI2ZmZiI+8J+Nurwvc3ZnPg==">
+    <title>Beer Budget Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .header .subtitle {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Dashboard */
+        .dashboard {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .today-total {
+            text-align: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .today-total .label {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 5px;
+        }
+
+        .today-total .value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #60a5fa;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat .label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 3px;
+        }
+
+        .stat .value {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .good { color: #10b981; }
+        .warning { color: #f59e0b; }
+        .bad { color: #ef4444; }
+
+        /* Off-Week Banner */
+        .off-week-banner {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            border: 2px solid #10b981;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .off-week-banner .title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .off-week-banner .subtitle {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Primary Action Buttons */
+        .primary-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn-primary {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-add-drink {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+        }
+
+        .btn-add-drink:active {
+            transform: scale(0.98);
+        }
+
+        .btn-dry-day {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .btn-dry-day:active {
+            transform: scale(0.98);
+        }
+
+        .btn-undo {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            padding: 12px;
+            font-size: 14px;
+        }
+
+        /* Weekly Calendar */
+        .calendar-section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .calendar-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+        }
+
+        .calendar-day .day-name {
+            font-weight: 600;
+            margin-bottom: 3px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .calendar-day .day-value {
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .calendar-day.dry {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: #10b981;
+        }
+
+        .calendar-day.dry .day-value {
+            color: #10b981;
+        }
+
+        .calendar-day.drinking {
+            background: rgba(96, 165, 250, 0.2);
+            border-color: #60a5fa;
+        }
+
+        .calendar-day.drinking .day-value {
+            color: #60a5fa;
+        }
+
+        .calendar-day.unknown {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .calendar-day.unknown:hover {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: #10b981;
+        }
+
+        .calendar-day.future {
+            background: transparent;
+            border-color: rgba(255, 255, 255, 0.05);
+            cursor: default;
+        }
+
+        .calendar-day.exception {
+            background: rgba(251, 146, 60, 0.2);
+            border-color: #fb923c;
+        }
+
+        .calendar-day.exception .day-value {
+            color: #fb923c;
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal {
+            background: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 25px;
+        }
+
+        .modal-header {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .drink-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .drink-btn {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .drink-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #60a5fa;
+        }
+
+        .size-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .size-btn {
+            padding: 12px;
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid #3b82f6;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .size-btn:hover {
+            background: rgba(59, 130, 246, 0.3);
+        }
+
+        .exception-toggle {
+            background: rgba(251, 146, 60, 0.1);
+            border: 1px solid rgba(251, 146, 60, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .exception-toggle input {
+            width: 20px;
+            height: 20px;
+        }
+
+        .exception-toggle label {
+            font-size: 13px;
+            color: #fb923c;
+            cursor: pointer;
+        }
+
+        .btn-back {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* Backup Section */
+        .backup-section {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid #fbbf24;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .backup-section .title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fbbf24;
+            margin-bottom: 10px;
+        }
+
+        .backup-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn-backup {
+            padding: 10px 20px;
+            background: #fbbf24;
+            border: none;
+            border-radius: 8px;
+            color: #0f172a;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-import {
+            padding: 10px 20px;
+            background: rgba(59, 130, 246, 0.8);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        /* History Section */
+        .history-section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+        }
+
+        .history-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .history-item {
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-item .time {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 11px;
+        }
+
+        .history-item .delete-btn {
+            padding: 4px 8px;
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+            border-radius: 4px;
+            color: #ef4444;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .exception-badge {
+            display: inline-block;
+            background: rgba(251, 146, 60, 0.2);
+            border: 1px solid #fb923c;
+            color: #fb923c;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🍺 Beer Budget</h1>
+            <div class="subtitle" id="dateRange">Loading...</div>
+        </div>
+
+        <!-- Off-Week Banner -->
+        <div class="off-week-banner" id="offWeekBanner" style="display: none;">
+            <div class="title">🌟 Off-Week Active</div>
+            <div class="subtitle" id="offWeekProgress">Day 1/7</div>
+        </div>
+
+        <!-- Dashboard -->
+        <div class="dashboard">
+            <div class="today-total">
+                <div class="label">Today's Total</div>
+                <div class="value" id="todayTotal">0.0</div>
+                <div class="label" style="margin-top: 5px;">pints</div>
+            </div>
+            <div class="stats-grid">
+                <div class="stat">
+                    <div class="label">This Week</div>
+                    <div class="value" id="weekTotal">0.0</div>
+                </div>
+                <div class="stat">
+                    <div class="label">Budget Left</div>
+                    <div class="value" id="budgetLeft">15.0</div>
+                </div>
+                <div class="stat">
+                    <div class="label">Dry Days</div>
+                    <div class="value good" id="dryDays">0</div>
+                </div>
+                <div class="stat">
+                    <div class="label">Dry Streak</div>
+                    <div class="value good" id="dryStreak">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Primary Actions -->
+        <div class="primary-actions">
+            <button class="btn-primary btn-add-drink" onclick="openDrinkModal()">
+                + Add Drink
+            </button>
+            <button class="btn-primary btn-dry-day" id="dryDayBtn" onclick="markDryDay()" style="display: none;">
+                ✓ Dry Day
+            </button>
+        </div>
+
+        <!-- Undo Button -->
+        <div class="primary-actions" id="undoSection" style="display: none;">
+            <button class="btn-primary btn-undo" onclick="undoLastDrink()">
+                ↶ Undo Last Drink
+            </button>
+        </div>
+
+        <!-- Weekly Calendar -->
+        <div class="calendar-section">
+            <div class="calendar-title">This Week</div>
+            <div class="calendar-grid" id="calendarGrid"></div>
+        </div>
+
+        <!-- Backup Warning -->
+        <div class="backup-section" id="backupSection">
+            <div class="title">⚠️ Time to backup your data</div>
+            <div class="backup-actions">
+                <button class="btn-backup" onclick="downloadBackup()">Download</button>
+                <button class="btn-import" onclick="document.getElementById('importFile').click()">Import</button>
+            </div>
+            <input type="file" id="importFile" accept=".json" onchange="importBackup(event)">
+        </div>
+
+        <!-- Today's History -->
+        <div class="history-section">
+            <div class="history-title">Today's Drinks</div>
+            <div id="todayHistory">No drinks logged today</div>
+        </div>
+    </div>
+
+    <!-- Add Drink Modal -->
+    <div class="modal-overlay" id="drinkModal">
+        <div class="modal">
+            <div class="modal-header" id="modalStep1">What are you drinking?</div>
+            <div class="modal-header" id="modalStep2" style="display: none;">What size?</div>
+            
+            <div id="drinkTypeGrid" class="drink-grid">
+                <button class="drink-btn" onclick="selectDrink('beer')">🍺 Beer</button>
+                <button class="drink-btn" onclick="selectDrink('wine')">🍷 Wine</button>
+                <button class="drink-btn" onclick="selectDrink('gin')">🍸 G&T</button>
+                <button class="drink-btn" onclick="selectDrink('cocktail')">🍹 Cocktail</button>
+            </div>
+
+            <div id="sizeGrid" style="display: none;"></div>
+
+            <div id="exceptionToggle" style="display: none;" class="exception-toggle">
+                <input type="checkbox" id="exceptionCheck">
+                <label for="exceptionCheck">This is an off-week exception</label>
+            </div>
+
+            <button class="btn-back" onclick="closeDrinkModal()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        const WEEKLY_BUDGET = 15.0;
+        const STORAGE_KEY = 'beerTrackerComplete';
+        const BACKUP_INTERVAL = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+        const drinkData = {
+            beer: {
+                pint: { pints: 1.0, units: 2.3, calories: 180, label: 'Pint' },
+                half: { pints: 0.5, units: 1.15, calories: 90, label: 'Half' },
+                third: { pints: 0.33, units: 0.76, calories: 60, label: '1/3 Pint' }
+            },
+            wine: {
+                small: { pints: 0.86, units: 1.5, calories: 83, label: '125ml' },
+                medium: { pints: 1.29, units: 2.1, calories: 116, label: '175ml' },
+                large: { pints: 1.72, units: 3.0, calories: 166, label: '250ml' }
+            },
+            gin: {
+                single: { pints: 0.57, units: 1.0, calories: 97, label: 'Single' },
+                double: { pints: 1.14, units: 2.0, calories: 194, label: 'Double' }
+            },
+            cocktail: {
+                standard: { pints: 1.14, units: 2.0, calories: 200, label: 'Standard' },
+                strong: { pints: 1.72, units: 3.0, calories: 250, label: 'Strong' }
+            }
+        };
+
+        let currentDrinkType = null;
+        let data = {
+            weekStart: null,
+            drinks: [],
+            dryDays: [],
+            offWeeks: [],
+            lastBackup: null
+        };
+
+        function getWeekStart() {
+            const now = new Date();
+            const day = now.getDay();
+            const sunday = new Date(now);
+            sunday.setDate(now.getDate() - day);
+            sunday.setHours(0, 0, 0, 0);
+            return sunday;
+        }
+
+        function getMonthStart() {
+            const now = new Date();
+            return new Date(now.getFullYear(), now.getMonth(), 1);
+        }
+
+        function isOffWeek() {
+            const now = new Date();
+            const monthStart = getMonthStart();
+            const weekStart = getWeekStart();
+            
+            // Check if current week overlaps with first week of month
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 6);
+            
+            return weekStart <= monthStart && weekEnd >= monthStart;
+        }
+
+        function init() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                data = JSON.parse(saved);
+            }
+
+            const weekStart = getWeekStart();
+            if (!data.weekStart || data.weekStart !== weekStart.getTime()) {
+                data.weekStart = weekStart.getTime();
+                data.drinks = data.drinks.filter(d => new Date(d.timestamp) >= weekStart);
+            }
+
+            updateDisplay();
+            checkBackup();
+        }
+
+        function save() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        function openDrinkModal() {
+            document.getElementById('drinkModal').style.display = 'block';
+            document.getElementById('modalStep1').style.display = 'block';
+            document.getElementById('modalStep2').style.display = 'none';
+            document.getElementById('drinkTypeGrid').style.display = 'grid';
+            document.getElementById('sizeGrid').style.display = 'none';
+            
+            const offWeek = isOffWeek();
+            document.getElementById('exceptionToggle').style.display = offWeek ? 'flex' : 'none';
+            document.getElementById('exceptionCheck').checked = false;
+        }
+
+        function closeDrinkModal() {
+            document.getElementById('drinkModal').style.display = 'none';
+            currentDrinkType = null;
+        }
+
+        function selectDrink(type) {
+            currentDrinkType = type;
+            document.getElementById('modalStep1').style.display = 'none';
+            document.getElementById('drinkTypeGrid').style.display = 'none';
+            document.getElementById('modalStep2').style.display = 'block';
+            
+            const sizeGrid = document.getElementById('sizeGrid');
+            sizeGrid.style.display = 'grid';
+            sizeGrid.innerHTML = '';
+            
+            const sizes = drinkData[type];
+            for (const [key, value] of Object.entries(sizes)) {
+                const btn = document.createElement('button');
+                btn.className = 'size-btn';
+                btn.textContent = value.label;
+                btn.onclick = () => logDrink(type, key);
+                sizeGrid.appendChild(btn);
+            }
+        }
+
+        function logDrink(type, size) {
+            const drink = drinkData[type][size];
+            const isException = document.getElementById('exceptionCheck').checked;
+            
+            data.drinks.push({
+                timestamp: Date.now(),
+                type: type,
+                size: size,
+                pints: drink.pints,
+                units: drink.units,
+                calories: drink.calories,
+                exception: isException
+            });
+            
+            save();
+            updateDisplay();
+            closeDrinkModal();
+        }
+
+        function undoLastDrink() {
+            if (data.drinks.length > 0) {
+                const today = new Date().toISOString().split('T')[0];
+                const todayDrinks = data.drinks.filter(d => 
+                    new Date(d.timestamp).toISOString().split('T')[0] === today
+                );
+                
+                if (todayDrinks.length > 0) {
+                    const lastDrink = todayDrinks[todayDrinks.length - 1];
+                    data.drinks = data.drinks.filter(d => d.timestamp !== lastDrink.timestamp);
+                    save();
+                    updateDisplay();
+                }
+            }
+        }
+
+        function markDryDay(dateStr = null) {
+            const date = dateStr || new Date().toISOString().split('T')[0];
+            
+            if (!data.dryDays.includes(date)) {
+                data.dryDays.push(date);
+                save();
+                updateDisplay();
+            }
+        }
+
+        function deleteDrink(timestamp) {
+            if (confirm('Delete this drink?')) {
+                data.drinks = data.drinks.filter(d => d.timestamp !== timestamp);
+                save();
+                updateDisplay();
+            }
+        }
+
+        function updateDisplay() {
+            const now = new Date();
+            const today = now.toISOString().split('T')[0];
+            const weekStart = new Date(data.weekStart);
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 6);
+            
+            // Date range
+            document.getElementById('dateRange').textContent = 
+                `${weekStart.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} - ${weekEnd.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`;
+            
+            // Off-week banner
+            const offWeek = isOffWeek();
+            if (offWeek) {
+                document.getElementById('offWeekBanner').style.display = 'block';
+                const dayOfWeek = now.getDay();
+                const offWeekDay = dayOfWeek === 0 ? 7 : dayOfWeek;
+                const exceptions = data.drinks.filter(d => 
+                    new Date(d.timestamp) >= weekStart && d.exception
+                ).length;
+                document.getElementById('offWeekProgress').textContent = 
+                    `Day ${offWeekDay}/7${exceptions > 0 ? ` (${exceptions} exception${exceptions > 1 ? 's' : ''})` : ''}`;
+            } else {
+                document.getElementById('offWeekBanner').style.display = 'none';
+            }
+            
+            // Today's drinks
+            const todayDrinks = data.drinks.filter(d => 
+                new Date(d.timestamp).toISOString().split('T')[0] === today
+            );
+            const todayTotal = todayDrinks.reduce((sum, d) => sum + d.pints, 0);
+            document.getElementById('todayTotal').textContent = todayTotal.toFixed(1);
+            
+            // Week's drinks (excluding off-week exceptions)
+            const weekDrinks = data.drinks.filter(d => {
+                if (offWeek && d.exception) return false;
+                return new Date(d.timestamp) >= weekStart;
+            });
+            const weekTotal = weekDrinks.reduce((sum, d) => sum + d.pints, 0);
+            document.getElementById('weekTotal').textContent = weekTotal.toFixed(1);
+            
+            const budgetLeft = WEEKLY_BUDGET - weekTotal;
+            const budgetEl = document.getElementById('budgetLeft');
+            budgetEl.textContent = budgetLeft.toFixed(1);
+            budgetEl.className = 'value ' + (budgetLeft >= 0 ? 'good' : 'bad');
+            
+            // Dry days this week
+            const dryDaysThisWeek = data.dryDays.filter(d => {
+                const dryDate = new Date(d);
+                return dryDate >= weekStart && dryDate <= weekEnd;
+            }).length;
+            document.getElementById('dryDays').textContent = dryDaysThisWeek;
+            
+            // Dry streak
+            let streak = 0;
+            const sortedDates = [...data.dryDays].sort().reverse();
+            const yesterday = new Date(now);
+            yesterday.setDate(yesterday.getDate() - 1);
+            let checkDate = new Date(yesterday);
+            
+            for (const dateStr of sortedDates) {
+                const dryDate = new Date(dateStr);
+                if (dryDate.toISOString().split('T')[0] === checkDate.toISOString().split('T')[0]) {
+                    streak++;
+                    checkDate.setDate(checkDate.getDate() - 1);
+                } else {
+                    break;
+                }
+            }
+            document.getElementById('dryStreak').textContent = streak;
+            
+            // Dry day button
+            const hasDrinksToday = todayDrinks.length > 0;
+            const alreadyMarkedDry = data.dryDays.includes(today);
+            document.getElementById('dryDayBtn').style.display = 
+                (!hasDrinksToday && !alreadyMarkedDry) ? 'block' : 'none';
+            
+            // Undo button
+            document.getElementById('undoSection').style.display = 
+                todayDrinks.length > 0 ? 'block' : 'none';
+            
+            // Calendar
+            updateCalendar();
+            
+            // Today's history
+            updateTodayHistory(todayDrinks);
+        }
+
+        function updateCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = '';
+            
+            const weekStart = new Date(data.weekStart);
+            const today = new Date().toISOString().split('T')[0];
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(weekStart);
+                date.setDate(weekStart.getDate() + i);
+                const dateStr = date.toISOString().split('T')[0];
+                
+                const dayEl = document.createElement('div');
+                dayEl.className = 'calendar-day';
+                
+                const dayDrinks = data.drinks.filter(d => 
+                    new Date(d.timestamp).toISOString().split('T')[0] === dateStr
+                );
+                const isDry = data.dryDays.includes(dateStr);
+                const isFuture = dateStr > today;
+                const hasException = dayDrinks.some(d => d.exception);
+                
+                if (isFuture) {
+                    dayEl.classList.add('future');
+                } else if (isDry) {
+                    dayEl.classList.add('dry');
+                } else if (dayDrinks.length > 0) {
+                    dayEl.classList.add(hasException ? 'exception' : 'drinking');
+                } else {
+                    dayEl.classList.add('unknown');
+                    dayEl.onclick = () => markDryDay(dateStr);
+                }
+                
+                dayEl.innerHTML = `
+                    <div class="day-name">${dayNames[i]}</div>
+                    <div class="day-value">
+                        ${isFuture ? '—' : 
+                          isDry ? '✓' : 
+                          dayDrinks.length > 0 ? dayDrinks.reduce((sum, d) => sum + d.pints, 0).toFixed(1) :
+                          '—'}
+                    </div>
+                `;
+                
+                grid.appendChild(dayEl);
+            }
+        }
+
+        function updateTodayHistory(drinks) {
+            const container = document.getElementById('todayHistory');
+            
+            if (drinks.length === 0) {
+                container.innerHTML = '<div class="history-item">No drinks logged today</div>';
+                return;
+            }
+            
+            container.innerHTML = drinks.map(d => {
+                const time = new Date(d.timestamp).toLocaleTimeString('en-GB', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                const drinkName = drinkData[d.type][d.size].label;
+                return `
+                    <div class="history-item">
+                        <div>
+                            <strong>${drinkName}</strong> (${d.pints.toFixed(1)} pints)
+                            ${d.exception ? '<span class="exception-badge">⚠️ Exception</span>' : ''}
+                            <div class="time">${time}</div>
+                        </div>
+                        <button class="delete-btn" onclick="deleteDrink(${d.timestamp})">Delete</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function checkBackup() {
+            const weekStart = new Date(data.weekStart);
+            const isSunday = new Date().getDay() === 0;
+            
+            if (!data.lastBackup || (Date.now() - data.lastBackup) > BACKUP_INTERVAL || isSunday) {
+                document.getElementById('backupSection').style.display = 'block';
+            }
+        }
+
+        function downloadBackup() {
+            const backup = JSON.stringify(data, null, 2);
+            const blob = new Blob([backup], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `beer-tracker-backup-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            
+            data.lastBackup = Date.now();
+            save();
+            document.getElementById('backupSection').style.display = 'none';
+        }
+
+        function importBackup(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    
+                    if (confirm('This will replace all current data. Are you sure?')) {
+                        data = imported;
+                        save();
+                        updateDisplay();
+                        alert('Backup imported successfully!');
+                    }
+                    
+                    event.target.value = '';
+                } catch (error) {
+                    console.error('Import error:', error);
+                    alert('Error reading backup file');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function checkAutoReset() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                const savedData = JSON.parse(saved);
+                const weekStart = getWeekStart().getTime();
+                
+                if (savedData.weekStart !== weekStart) {
+                    init();
+                }
+            }
+        }
+
+        init();
+        setInterval(checkAutoReset, 3600000);
+        setInterval(updateDisplay, 60000);
+    </script>
+</body>
+</html>
