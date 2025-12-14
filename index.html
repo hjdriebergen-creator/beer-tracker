@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#1e293b">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Beer Tracker">
-    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiQmVlciBCdWRnZXQgVHJhY2tlciIsInNob3J0X25hbWUiOiJCZWVyIFRyYWNrZXIiLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzFlMjkzYiIsInRoZW1lX2NvbG9yIjoiIzFlMjkzYiIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSFpwWlhkQ2IzZzlJakFnTUNBeE1qZ2dNVEk0SWo0OGNtVmpkQ0IzYVdSMGFEMGlNVEk0SWlCb1pXbG5hSFE5SWpFeU9DSWdabWxzYkQwaUl6RTFPVE0xT0NJdlBqeDBaWGgwSUhnOUlqWTBJaUI1UFNJM05DSWdabTl1ZEMxemFYcGxQU0kxTmlJZ1ptbHNiRDBpSTJabVppSStmRHd2ZEdWNGRENDhMMk4yWno0PSIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==">
-    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgZmlsbD0iIzE1OTM1OCIvPjx0ZXh0IHg9IjY0IiB5PSI3NCIgZm9udC1zaXplPSI1NiIgZmlsbD0iI2ZmZiI+8J+Nurwvc3ZnPg==">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='75' font-size='75'%3E🍺%3C/text%3E%3C/svg%3E">
     <title>Beer Budget Tracker</title>
     <style>
         * {
@@ -46,7 +46,6 @@
             color: rgba(255, 255, 255, 0.6);
         }
 
-        /* Dashboard */
         .dashboard {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -99,7 +98,6 @@
         .warning { color: #f59e0b; }
         .bad { color: #ef4444; }
 
-        /* Off-Week Banner */
         .off-week-banner {
             background: linear-gradient(135deg, #059669 0%, #047857 100%);
             border: 2px solid #10b981;
@@ -120,7 +118,6 @@
             color: rgba(255, 255, 255, 0.9);
         }
 
-        /* Primary Action Buttons */
         .primary-actions {
             display: flex;
             gap: 10px;
@@ -163,7 +160,6 @@
             font-size: 14px;
         }
 
-        /* Weekly Calendar */
         .calendar-section {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -250,7 +246,6 @@
             color: #fb923c;
         }
 
-        /* Modal Overlay */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -359,7 +354,6 @@
             cursor: pointer;
         }
 
-        /* Backup Section */
         .backup-section {
             background: rgba(251, 191, 36, 0.1);
             border: 1px solid #fbbf24;
@@ -407,7 +401,6 @@
             display: none;
         }
 
-        /* History Section */
         .history-section {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -467,13 +460,11 @@
             <div class="subtitle" id="dateRange">Loading...</div>
         </div>
 
-        <!-- Off-Week Banner -->
         <div class="off-week-banner" id="offWeekBanner" style="display: none;">
             <div class="title">🌟 Off-Week Active</div>
             <div class="subtitle" id="offWeekProgress">Day 1/7</div>
         </div>
 
-        <!-- Dashboard -->
         <div class="dashboard">
             <div class="today-total">
                 <div class="label">Today's Total</div>
@@ -500,7 +491,6 @@
             </div>
         </div>
 
-        <!-- Primary Actions -->
         <div class="primary-actions">
             <button class="btn-primary btn-add-drink" onclick="openDrinkModal()">
                 + Add Drink
@@ -510,20 +500,17 @@
             </button>
         </div>
 
-        <!-- Undo Button -->
         <div class="primary-actions" id="undoSection" style="display: none;">
             <button class="btn-primary btn-undo" onclick="undoLastDrink()">
                 ↶ Undo Last Drink
             </button>
         </div>
 
-        <!-- Weekly Calendar -->
         <div class="calendar-section">
             <div class="calendar-title">This Week</div>
             <div class="calendar-grid" id="calendarGrid"></div>
         </div>
 
-        <!-- Backup Warning -->
         <div class="backup-section" id="backupSection">
             <div class="title">⚠️ Time to backup your data</div>
             <div class="backup-actions">
@@ -533,14 +520,12 @@
             <input type="file" id="importFile" accept=".json" onchange="importBackup(event)">
         </div>
 
-        <!-- Today's History -->
         <div class="history-section">
             <div class="history-title">Today's Drinks</div>
             <div id="todayHistory">No drinks logged today</div>
         </div>
     </div>
 
-    <!-- Add Drink Modal -->
     <div class="modal-overlay" id="drinkModal">
         <div class="modal">
             <div class="modal-header" id="modalStep1">What are you drinking?</div>
@@ -567,7 +552,7 @@
     <script>
         const WEEKLY_BUDGET = 15.0;
         const STORAGE_KEY = 'beerTrackerComplete';
-        const BACKUP_INTERVAL = 7 * 24 * 60 * 60 * 1000; // 7 days
+        const BACKUP_INTERVAL = 7 * 24 * 60 * 60 * 1000;
 
         const drinkData = {
             beer: {
@@ -599,6 +584,10 @@
             lastBackup: null
         };
 
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js');
+        }
+
         function getWeekStart() {
             const now = new Date();
             const day = now.getDay();
@@ -617,11 +606,8 @@
             const now = new Date();
             const monthStart = getMonthStart();
             const weekStart = getWeekStart();
-            
-            // Check if current week overlaps with first week of month
             const weekEnd = new Date(weekStart);
             weekEnd.setDate(weekStart.getDate() + 6);
-            
             return weekStart <= monthStart && weekEnd >= monthStart;
         }
 
@@ -742,11 +728,9 @@
             const weekEnd = new Date(weekStart);
             weekEnd.setDate(weekStart.getDate() + 6);
             
-            // Date range
             document.getElementById('dateRange').textContent = 
                 `${weekStart.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} - ${weekEnd.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`;
             
-            // Off-week banner
             const offWeek = isOffWeek();
             if (offWeek) {
                 document.getElementById('offWeekBanner').style.display = 'block';
@@ -761,14 +745,12 @@
                 document.getElementById('offWeekBanner').style.display = 'none';
             }
             
-            // Today's drinks
             const todayDrinks = data.drinks.filter(d => 
                 new Date(d.timestamp).toISOString().split('T')[0] === today
             );
             const todayTotal = todayDrinks.reduce((sum, d) => sum + d.pints, 0);
             document.getElementById('todayTotal').textContent = todayTotal.toFixed(1);
             
-            // Week's drinks (excluding off-week exceptions)
             const weekDrinks = data.drinks.filter(d => {
                 if (offWeek && d.exception) return false;
                 return new Date(d.timestamp) >= weekStart;
@@ -781,14 +763,12 @@
             budgetEl.textContent = budgetLeft.toFixed(1);
             budgetEl.className = 'value ' + (budgetLeft >= 0 ? 'good' : 'bad');
             
-            // Dry days this week
             const dryDaysThisWeek = data.dryDays.filter(d => {
                 const dryDate = new Date(d);
                 return dryDate >= weekStart && dryDate <= weekEnd;
             }).length;
             document.getElementById('dryDays').textContent = dryDaysThisWeek;
             
-            // Dry streak
             let streak = 0;
             const sortedDates = [...data.dryDays].sort().reverse();
             const yesterday = new Date(now);
@@ -806,20 +786,15 @@
             }
             document.getElementById('dryStreak').textContent = streak;
             
-            // Dry day button
             const hasDrinksToday = todayDrinks.length > 0;
             const alreadyMarkedDry = data.dryDays.includes(today);
             document.getElementById('dryDayBtn').style.display = 
                 (!hasDrinksToday && !alreadyMarkedDry) ? 'block' : 'none';
             
-            // Undo button
             document.getElementById('undoSection').style.display = 
                 todayDrinks.length > 0 ? 'block' : 'none';
             
-            // Calendar
             updateCalendar();
-            
-            // Today's history
             updateTodayHistory(todayDrinks);
         }
 
